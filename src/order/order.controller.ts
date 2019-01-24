@@ -1,4 +1,4 @@
-import {Body, Controller, Get, NotAcceptableException, NotFoundException, Param, Post} from '@nestjs/common';
+import {Body, Controller, Get, NotFoundException, Param, ParseIntPipe, Post} from '@nestjs/common';
 import {OrderService} from "./order.service";
 import {Order} from "../models/order";
 import {CreateOrderDTO} from "../dto/create-order-dto";
@@ -14,16 +14,9 @@ export class OrderController {
     }
 
     @Get(':id')
-    async getOrderById(@Param('id') id: number): Promise<Order> {
-        // check for invalid arguments
-        if (isNaN(id)) {
-            throw new NotAcceptableException(`Argument "${id}" not allowed!`);
-        }
-
-        // try to find order
-        const order = await this.os.findOrderById(Number(id));
-
-        // return order if exists
+    async getOrderById(@Param('id', new ParseIntPipe()) id: number): Promise<Order> {
+        // try to find order and return it
+        const order = await this.os.findOrderById(id);
         if (order) {
             return order;
         }

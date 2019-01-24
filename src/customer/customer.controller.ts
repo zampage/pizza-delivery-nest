@@ -1,13 +1,15 @@
-import {Controller, Get, Param, ParseIntPipe} from '@nestjs/common';
+import {Controller, Get, Param, ParseIntPipe, UseGuards} from '@nestjs/common';
 import {CustomerService} from "./customer.service";
 import {Customer} from "../models/customer";
 import {OrderService} from "../order/order.service";
+import {AuthGuard} from "../guards/auth.guard";
 
 @Controller('customer')
 export class CustomerController {
     constructor(private cs: CustomerService, private os: OrderService) {}
 
     @Get()
+    @UseGuards(AuthGuard)
     getAll(): Promise<Customer[]> {
         return this.cs.getAll();
     }

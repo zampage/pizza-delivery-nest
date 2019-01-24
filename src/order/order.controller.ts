@@ -1,6 +1,7 @@
-import {Controller, Get, NotAcceptableException, NotFoundException, Param} from '@nestjs/common';
+import {Body, Controller, Get, NotAcceptableException, NotFoundException, Param, Post} from '@nestjs/common';
 import {OrderService} from "./order.service";
 import {Order} from "../models/order";
+import {CreateOrderDTO} from "../dto/create-order-dto";
 
 @Controller('order')
 export class OrderController {
@@ -29,5 +30,10 @@ export class OrderController {
 
         // notify that order was not found
         throw new NotFoundException(`Order with id "${id}" was not found!`);
+    }
+
+    @Post()
+    async create(@Body() order: CreateOrderDTO): Promise<number> {
+        return this.os.addOrder(order);
     }
 }

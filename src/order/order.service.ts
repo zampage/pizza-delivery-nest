@@ -40,6 +40,11 @@ export class OrderService {
         return Promise.resolve(order.id);
     }
 
+    async findOrdersByCustomerId(id: number): Promise<Order[]> {
+        const orders = await this.getAll();
+        return orders.filter(o => o.customer.id === id);
+    }
+
     private async fetchAll(): Promise<Order[]> {
         return Promise.all(ORDERS.map(o => this.mapOrderToCustomer(o)))
             .then((orders) => this.orders = orders);

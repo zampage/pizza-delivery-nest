@@ -1,12 +1,14 @@
 import {Controller, Get} from '@nestjs/common';
+import {OrderService} from "./order.service";
 import {Order} from "../models/order";
 
 @Controller('order')
 export class OrderController {
-    private orders: Order[];
+
+    constructor(private os: OrderService) {}
 
     @Get()
-    getAll() {
-
+    async getAll(): Promise<Order[]> {
+        return this.os.getAll();
     }
 }

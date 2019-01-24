@@ -9,7 +9,7 @@ export class OrderController {
     constructor(private os: OrderService) {}
 
     @Get()
-    async getAll(): Promise<Order[]> {
+    getAll(): Promise<Order[]> {
         return this.os.getAll();
     }
 
@@ -19,7 +19,7 @@ export class OrderController {
     }
 
     @Post()
-    async create(@Body() order: CreateOrderDTO): Promise<number> {
+    create(@Body() order: CreateOrderDTO): Promise<number> {
         return this.os.addOrder(order);
     }
 }

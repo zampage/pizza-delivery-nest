@@ -13,13 +13,13 @@ export class CustomerController {
     }
 
     @Get(':id')
-    async getBill(@Param('id', new ParseIntPipe()) id: number): Promise<string> {
-        const c = await this.cs.findCustomerById(id);
-        const o = await this.os.findOrdersByCustomerId(c.id);
-        const bill = o.reduce((total, order) => {
+    async getBill(@Param('id', new ParseIntPipe()) id: number): Promise<Customer> {
+        const customer = await this.cs.findCustomerById(id);
+        const orders = await this.os.findOrdersByCustomerId(customer.id);
+        customer.bill = orders.reduce((total, order) => {
             total += order.items.reduce((amnt, item) => amnt += item.price, 0);
             return total;
         }, 0);
-        return `Customer ${c.firstname} ${c.lastname} has an open bill of: ${bill}`;
+        return Promise.resolve(customer);
     }
 }

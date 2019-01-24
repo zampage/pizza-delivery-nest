@@ -14,15 +14,8 @@ export class OrderController {
     }
 
     @Get(':id')
-    async getOrderById(@Param('id', new ParseIntPipe()) id: number): Promise<Order> {
-        // try to find order and return it
-        const order = await this.os.findOrderById(id);
-        if (order) {
-            return order;
-        }
-
-        // notify that order was not found
-        throw new NotFoundException(`Order with id "${id}" was not found!`);
+    getOrderById(@Param('id', new ParseIntPipe()) id: number): Promise<Order> {
+        return this.os.findOrderById(id);
     }
 
     @Post()

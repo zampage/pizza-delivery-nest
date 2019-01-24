@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable, NotFoundException} from '@nestjs/common';
 import {Order} from "../models/order";
 import {ORDERS} from "../mock/orders";
 import {CreateOrderDTO} from "../dto/create-order-dto";
@@ -8,7 +8,7 @@ import {CustomerService} from "../customer/customer.service";
 export class OrderService {
     private orders: Order[];
 
-    constructor(private cs: CustomerService){}
+    constructor(private cs: CustomerService) {}
 
     getAll(): Promise<Order[]> {
         if (this.orders) {
@@ -21,7 +21,12 @@ export class OrderService {
     async findOrderById(id: number): Promise<Order> {
         const orders = await this.getAll();
         const order = orders.find(o => o.id === id);
-        return Promise.resolve(order);
+
+        if (order) {
+            return order;
+        }
+
+        throw new NotFoundException(`Order with id "${id}" was not found!`);
     }
 
     async addOrder(config: CreateOrderDTO): Promise<number> {
@@ -46,13 +51,13 @@ export class OrderService {
     }
 
     private async fetchAll(): Promise<Order[]> {
-        return Promise.all(ORDERS.map(o => this.mapOrderToCustomer(o)))
-            .then((orders) => this.orders = orders);
+        this.orders = await Promise.all(ORDERS.map(o => this.mapOrderToCustomer(o)));
+        return Promise.resolve(this.orders);
     }
 
     private async mapOrderToCustomer(order): Promise<Order> {
         order.customer = await this.cs.findCustomerById(order.customerId);
         delete order.customerId;
-        return Object.assign(new Order(), order);
+        return Promise.resolve(Object.assign(new Order(), order));
     }
 }

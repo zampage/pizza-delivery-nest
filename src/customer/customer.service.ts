@@ -1,26 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable, NotFoundException} from '@nestjs/common';
 import {Customer} from "../models/customer";
 import {CUSTOMERS} from "../mock/customers";
 
 @Injectable()
 export class CustomerService {
-    private customers: Customer[];
+    private customers: Customer[] = [];
 
     getAll(): Promise<Customer[]> {
-        if (!this.customers) {
-            return this.fetchAll();
+        if (this.customers.length > 0) {
+            return Promise.resolve(this.customers);
         }
 
-        return Promise.resolve(this.customers);
+        return this.fetchAll();
     }
 
     async findCustomerById(id: number): Promise<Customer> {
         const customers = await this.getAll();
-        return Promise.resolve(customers.find(c => c.id === id));
+        const customer = customers.find(c => c.id === id);
+
+        if (customer) {
+            return Promise.resolve(customer);
+        }
+
+        throw new NotFoundException(`Customer with ID "${id}" was not found!`);
     }
 
     private fetchAll(): Promise<Customer[]> {
-        this.customers = CUSTOMERS;
+        this.customers = CUSTOMERS.map(c => Object.assign(new Customer(), c));
         return Promise.resolve(this.customers);
     }
 }

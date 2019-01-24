@@ -14,6 +14,12 @@ export class OrderService {
         return this.fetchAll();
     }
 
+    async findOrderById(id: number): Promise<Order> {
+        const orders = await this.getAll();
+        const order = orders.find(o => o.id === id);
+        return Promise.resolve(order);
+    }
+
     private fetchAll(): Promise<Order[]> {
         this.orders = ORDERS;
         return Promise.resolve(this.orders);

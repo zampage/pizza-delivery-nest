@@ -1,8 +1,8 @@
-import moment = require("moment");
 import {IsArray, IsDefined, IsInt, IsString, ValidateNested} from "class-validator";
 import {CreateProductDTO} from "./create-product-dto";
 import {Type} from "class-transformer";
 import {Product} from "../interface/product";
+import * as moment from 'moment';
 
 export class CreateOrderDTO {
     @IsDefined()
